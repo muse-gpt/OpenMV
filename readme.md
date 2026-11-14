@@ -93,6 +93,9 @@ export default compileSongMv(plan, { grain: 0.05 }); // 3. 编译成 Film
 
 - 预设：`PALETTES`（6 套）、`CAMERA_MOVES`（6 种）、`TEXT_STYLES`（5 种），
   以及 `beatGrid` / `lyricMv` / `divider`。id 是稳定合同。
+- 鼓组：`lyricMv` 与 `compileSongMv` 都接受 `drums: '<节奏型名>'`（如
+  `four-on-floor`、`half-time`、`lofi`），按歌曲 BPM 铺满全片；音色与节奏型
+  由共享合成核心生成（17 件乐器 + 8 种鼓点），不依赖任何音频素材。
 - skills：`skills/open-mv-song`（歌曲解析与脚本）、`skills/open-mv-director`
   （整体气质与能量曲线）、`skills/open-mv-lyric`（歌词排期与字效）、
   `skills/open-mv-beat`（卡点与音效落点）。

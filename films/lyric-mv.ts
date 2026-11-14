@@ -22,6 +22,7 @@ export default lyricMv({
     hits: true,
     bgm: 0.1,
     grain: 0.05,
+    drums: 'half-time',
     lines: [
         { text: '把夜色折成一条街', beats: 4 },
         { text: '灯一盏一盏退后', beats: 4 },

@@ -87,6 +87,8 @@ export interface LyricMvOptions {
     hits?: boolean;
     /** 合成歌声；缺省则只有画面与 BGM。 */
     voice?: LyricVoiceInput | null;
+    /** 铺一条鼓组节奏型（预设名），按 `tempoBpm` 铺满全片。 */
+    drums?: string | null;
     /** 颗粒强度，0 关闭。 */
     grain?: number;
 }
@@ -166,9 +168,23 @@ export function lyricMv(options: LyricMvOptions): Film {
         sfx.push({ at: 0, kind: 'impact' as const, volume: 0.4 });
     }
     const voice = options.voice;
+    const drums = options.drums;
     film.audio({
         bgm: options.bgm === null ? null : { volume: options.bgm ?? 0.12 },
         sfx,
+        ...(drums
+            ? {
+                  patterns: [
+                      {
+                          at: 0,
+                          preset: drums,
+                          bpm,
+                          bars: Math.min(32, Math.max(1, Math.ceil(cursor / grid.barSeconds))),
+                          volume: 0.7,
+                      },
+                  ],
+              }
+            : {}),
         ...(voice
             ? {
                   voice: [

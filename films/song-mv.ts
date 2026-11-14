@@ -51,6 +51,7 @@ export default compileSongMv(plan, {
     grain: 0.05,
     hits: true,
     bgm: 0.1,
+    drums: 'lofi',
     voice: {
         syllables: [
             { onset: 'r', vowel: 'a', pitch: 293.66, beats: 4 },

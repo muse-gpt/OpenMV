@@ -23,6 +23,10 @@ description: 卡点与音效落点。需要按 BPM 把鼓组、重音、转场�
 
 1. 有歌曲文件时先 `open-mv analyze` 拿 BPM 与 `beatOffsetSeconds`：第一拍通常不在 0 秒，
    所有卡点都要加上这个偏移。没有文件时用 `beatGrid` 打印关键时间点核对。
+2. 需要整片鼓组时用 `compileSongMv(plan, { drums: 'lofi' })` 或 `lyricMv({ drums })`，
+   它按歌曲 BPM 铺满全片；可用节奏型：`four-on-floor`、`breakbeat`、`trap`、`rock`、
+   `half-time`、`bossa`、`lofi`、`dnb`。要换音色或自己写步表，用 OpenCut 的
+   `patterns.tracks`（17 件乐器 + 每小节 16 步）。
 2. 密度分层：小节头 `impact`、拍点 `tick`、段落前 `riser`、画面切换 `whoosh`。同一拍不要超过两层。
 3. 音量：卡点 `0.10–0.30`，段落头 `0.25–0.45`，riser 提前 1–2 小节进场。
 4. 逐拍 tick 时给 `pitch` 轻微递变（如 1.0→1.3）制造推进感，但不要超出参数范围（pitch ≥ 0.05）。

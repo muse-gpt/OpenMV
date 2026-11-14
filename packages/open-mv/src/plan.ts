@@ -115,6 +115,8 @@ export interface CompileOptions {
     hits?: boolean;
     /** BGM 音量；`null` 关闭（默认 0.1）。 */
     bgm?: number | null;
+    /** 铺一条鼓组节奏型（预设名），按歌曲 BPM 与时长铺满。 */
+    drums?: string | null;
     voice?: LyricVoiceInput | null;
 }
 
@@ -180,9 +182,23 @@ export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): F
     }
 
     const voice = options.voice;
+    const drums = options.drums;
     film.audio({
         bgm: options.bgm === null ? null : { volume: options.bgm ?? 0.1 },
         sfx,
+        ...(drums
+            ? {
+                  patterns: [
+                      {
+                          at: 0,
+                          preset: drums,
+                          bpm: plan.song.bpm,
+                          bars: Math.min(32, Math.max(1, Math.ceil(plan.song.durationSeconds / grid.barSeconds))),
+                          volume: 0.75,
+                      },
+                  ],
+              }
+            : {}),
         ...(voice
             ? {
                   voice: [
