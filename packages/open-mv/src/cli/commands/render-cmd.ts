@@ -34,6 +34,7 @@ export function registerRenderCommand(cli: Cli): void {
                 seconds: number;
                 backend: string;
                 audio: boolean;
+                scenes?: Array<{ id: string; range: [number, number]; rendered: boolean }>;
             };
             if (options.json === true) {
                 ctx.stdout(JSON.stringify(stats, null, 2));
@@ -43,6 +44,9 @@ export function registerRenderCommand(cli: Cli): void {
                 `${stats.out} ${stats.bytes} bytes · ${stats.frames} frames (${stats.seconds.toFixed(1)}s) · ${stats.backend}` +
                     (stats.audio ? ' · audio' : ''),
             );
+            for (const scene of stats.scenes ?? []) {
+                ctx.stdout(`scene ${scene.id}: frames ${scene.range[0]}..${scene.range[1]}`);
+            }
             return 0;
         });
 }

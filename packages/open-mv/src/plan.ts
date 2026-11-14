@@ -160,6 +160,9 @@ export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): F
             items.push(grain({ at: 0, dur: duration, strength: grainStrength, density: 14000 }));
         }
         film.scene({
+            // The song section id is the stable handle a review note or a
+            // partial re-render points at.
+            id: shot.section.id,
             duration,
             background: paletteBackground(palette),
             camera: cameraOf(shot.camera),

@@ -120,6 +120,7 @@ export function lyricMv(options: LyricMvOptions): Film {
     if (options.title) {
         const duration = grid.secondsOf(options.titleBeats ?? 4);
         film.scene({
+            id: 'title',
             duration,
             background: paletteBackground(palette),
             camera: cameraOf(camera),
@@ -132,11 +133,12 @@ export function lyricMv(options: LyricMvOptions): Film {
         cursor += duration;
     }
 
-    for (const line of options.lines) {
+    for (const [index, line] of options.lines.entries()) {
         const style = line.style ? textStyleById(line.style) : defaultStyle;
         const duration = Math.max(0.35, grid.secondsOf(line.beats ?? 4));
         lineStarts.push(cursor);
         film.scene({
+            id: `line-${index}`,
             duration,
             background: paletteBackground(palette),
             camera: cameraOf(camera),
