@@ -1,9 +1,11 @@
 {
-  "cli.intro": "open-mv — MV 预设、节拍网格与歌词编译",
+  "cli.intro": "open-mv — 歌曲优先的 MV 创作：解析歌曲、写分镜脚本、出片",
+  "cli.cmd.analyze": "解析 PCM WAV 歌曲：BPM、拍偏移与段落结构（位置参数：<song.wav>）",
   "cli.cmd.presets": "列出 MV 预设目录（调色板、运镜、歌词字效）",
   "cli.cmd.render": "渲染默认导出 OpenCut Film 的影片模块（位置参数：<film.ts>）",
   "cli.opt.output": "输出 MP4 路径",
-  "cli.opt.json": "以 JSON 输出目录",
+  "cli.opt.json": "以 JSON 输出结果",
+  "cli.analyze.sections": "段落：",
   "cli.presets.palettes": "调色板：",
   "cli.presets.camera": "运镜：",
   "cli.presets.textStyles": "字效："

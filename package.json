@@ -13,8 +13,10 @@
         "build": "pnpm --filter @wae/open-mv run build",
         "typecheck": "pnpm --filter @wae/open-mv run typecheck",
         "presets": "pnpm run build && node packages/open-mv/dist/cli/main.js presets",
+        "analyze": "pnpm run build && node packages/open-mv/dist/cli/main.js analyze",
         "render:lyric": "pnpm run build && node packages/open-mv/dist/cli/main.js render films/lyric-mv.ts -o lyric-mv.mp4",
-        "render:beat": "pnpm run build && node packages/open-mv/dist/cli/main.js render films/beat-mv.ts -o beat-mv.mp4"
+        "render:beat": "pnpm run build && node packages/open-mv/dist/cli/main.js render films/beat-mv.ts -o beat-mv.mp4",
+        "render:song": "pnpm run build && node packages/open-mv/dist/cli/main.js render films/song-mv.ts -o song-mv.mp4"
     },
     "devDependencies": {
         "@types/node": "^22.20.4",

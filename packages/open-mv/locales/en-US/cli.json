@@ -1,9 +1,11 @@
 {
-  "cli.intro": "open-mv — music-video presets, beat grid and lyric compilation",
+  "cli.intro": "open-mv — song-first MV authoring: analyze the song, write the shot script, render",
+  "cli.cmd.analyze": "Analyze a PCM WAV song: BPM, beat offset and sections (positional: <song.wav>)",
   "cli.cmd.presets": "List the MV preset catalogue (palettes, camera moves, lyric text styles)",
   "cli.cmd.render": "Render a film module that default-exports an OpenCut Film (positional: <film.ts>)",
   "cli.opt.output": "Output MP4 path",
-  "cli.opt.json": "Print the catalogue as JSON",
+  "cli.opt.json": "Print the result as JSON",
+  "cli.analyze.sections": "sections:",
   "cli.presets.palettes": "palettes:",
   "cli.presets.camera": "camera moves:",
   "cli.presets.textStyles": "text styles:"
