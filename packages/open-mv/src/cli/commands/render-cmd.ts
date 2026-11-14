@@ -9,7 +9,7 @@ import type { SongMvPlan } from '../../index.js';
 import { withSections } from '../sections.js';
 
 /** The render report both modes print. */
-interface RenderStats {
+export interface RenderStats {
     out: string;
     bytes: number;
     frames: number;
@@ -82,7 +82,7 @@ export function registerRenderCommand(cli: Cli): void {
 }
 
 /** Song mode: analysis → plan → compile → render. */
-function renderFromSong(songPath: string, out: string, options: Record<string, unknown>): RenderStats {
+export function renderFromSong(songPath: string, out: string, options: Record<string, unknown>): RenderStats {
     const analyzed = analyzeWav(resolve(songPath));
     const song = typeof options.sections === 'string' ? withSections(analyzed, options.sections) : analyzed;
     const size = parseSize(options.size);
@@ -101,7 +101,7 @@ function renderFromSong(songPath: string, out: string, options: Record<string, u
 }
 
 /** Plan mode: render a reviewed storyboard file without re-planning. */
-function renderFromPlan(path: string, out: string, options: Record<string, unknown>): RenderStats {
+export function renderFromPlan(path: string, out: string, options: Record<string, unknown>): RenderStats {
     const raw = JSON.parse(readFileSync(resolve(path), 'utf8')) as SongMvPlan;
     if (!raw || !Array.isArray(raw.shots) || raw.shots.length === 0) {
         throw new Error(`${path} must contain a storyboard plan with at least one shot`);
@@ -116,7 +116,7 @@ function renderFromPlan(path: string, out: string, options: Record<string, unkno
 }
 
 /** Film mode: a module that default-exports an OpenCut `Film`. */
-async function renderFilmModule(filmPath: string | undefined, out: string): Promise<RenderStats> {
+export async function renderFilmModule(filmPath: string | undefined, out: string): Promise<RenderStats> {
     if (!filmPath) {
         throw new Error('render needs a film module or --song <song.wav>');
     }
