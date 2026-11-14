@@ -58,6 +58,12 @@ open-mv verify films/lyric-mv.ts --json
 open-mv render --song song.wav --lines lyrics.txt --sections sections.json -o mv.mp4
 ```
 
+```bash
+# Review the plan as a file, edit it, then render exactly that plan.
+open-mv plan song.wav --lines lyrics.txt --out plan.json
+open-mv render --plan plan.json -o mv.mp4
+```
+
 `--sections` is a JSON array of `{ kind, start, end }` entries that replaces the
 detected structure; overlapping, unordered or out-of-range entries fail
 explicitly. Use it when the analysis misreads a boundary you already know.

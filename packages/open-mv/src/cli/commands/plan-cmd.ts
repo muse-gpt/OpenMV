@@ -1,10 +1,11 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import type { Cli } from '@wae/commander';
 
 import { planSongMv } from '../../plan.js';
 import { analyzeWav } from '../../song.js';
+import { withSections } from '../sections.js';
 
 /**
  * Plans the storyboard script from a song without rendering.
@@ -19,11 +20,13 @@ import { analyzeWav } from '../../song.js';
 export function registerPlanCommand(cli: Cli): void {
     cli.command('plan', 'cli.cmd.plan')
         .option('--lines <file>', 'cli.opt.lines')
+        .option('--sections <file>', 'cli.opt.sections')
         .option('--palette <id>', 'cli.opt.palette')
         .option('--camera <id>', 'cli.opt.camera')
         .option('--style <id>', 'cli.opt.style')
         .option('--fps <n>', 'cli.opt.fps')
         .option('--size <WxH>', 'cli.opt.size')
+        .option('--out <file>', 'cli.opt.planOut')
         .option('--json', 'cli.opt.json')
         .actionCtx((options, _args, ctx) => {
             const file = options._[0];
@@ -33,8 +36,10 @@ export function registerPlanCommand(cli: Cli): void {
             }
             try {
                 const size = parseSize(options.size);
+                const analyzed = analyzeWav(resolve(file));
+                const song = typeof options.sections === 'string' ? withSections(analyzed, options.sections) : analyzed;
                 const plan = planSongMv({
-                    song: analyzeWav(resolve(file)),
+                    song,
                     lines: typeof options.lines === 'string' ? readLines(options.lines) : [],
                     palette: text(options.palette),
                     camera: text(options.camera),
@@ -46,6 +51,10 @@ export function registerPlanCommand(cli: Cli): void {
                 if (options.json === true) {
                     ctx.stdout(JSON.stringify(plan, null, 2));
                     return 0;
+                }
+                if (typeof options.out === 'string') {
+                    writeFileSync(resolve(options.out), `${JSON.stringify(plan, null, 2)}\n`);
+                    ctx.stdout(`plan written to ${options.out}`);
                 }
                 ctx.stdout(
                     `${file}: ${plan.song.bpm.toFixed(1)} BPM · ${plan.song.beatsPerBar}/4 · ` +

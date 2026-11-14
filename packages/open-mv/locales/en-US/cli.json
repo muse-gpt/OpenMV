@@ -10,6 +10,8 @@
   "cli.opt.json": "Print the result as JSON",
   "cli.opt.lines": "Lyric lines file, one line per lyric",
   "cli.opt.song": "Song WAV to analyse and render directly (song-first mode)",
+  "cli.opt.plan": "Reviewed storyboard JSON to render without re-planning",
+  "cli.opt.planOut": "Write the planned storyboard JSON to this file for review and later rendering",
   "cli.opt.sections": "Corrected sections JSON array overriding the analysis",
   "cli.opt.drums": "Drum-groove preset id for the render",
   "cli.opt.palette": "Palette preset id",

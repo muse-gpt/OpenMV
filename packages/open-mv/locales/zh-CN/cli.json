@@ -10,6 +10,8 @@
   "cli.opt.json": "以 JSON 输出结果",
   "cli.opt.lines": "歌词文件，一行一句",
   "cli.opt.song": "直接解析并渲染的歌曲 WAV（歌曲优先模式）",
+  "cli.opt.plan": "复核过的分镜 JSON，直接渲染而不再重新规划",
+  "cli.opt.planOut": "把分镜 JSON 写入此文件，供复核与后续渲染",
   "cli.opt.sections": "覆盖自动分析的校正段落 JSON 数组",
   "cli.opt.drums": "渲染时使用的鼓组节奏型预设 id",
   "cli.opt.palette": "调色板预设 id",
