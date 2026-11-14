@@ -38,6 +38,8 @@ export function registerRenderCommand(cli: Cli): void {
         .option('--lines <file>', 'cli.opt.lines')
         .option('--sections <file>', 'cli.opt.sections')
         .option('--palette <id>', 'cli.opt.palette')
+        .option('--camera <id>', 'cli.opt.camera')
+        .option('--style <id>', 'cli.opt.style')
         .option('--size <WxH>', 'cli.opt.size')
         .option('--fps <n>', 'cli.opt.fps')
         .option('--drums <preset>', 'cli.opt.drums')
@@ -90,6 +92,8 @@ export function renderFromSong(songPath: string, out: string, options: Record<st
         song,
         lines: typeof options.lines === 'string' ? readLines(options.lines) : [],
         palette: text(options.palette),
+        camera: text(options.camera),
+        textStyle: text(options.style),
         fps: number(options.fps),
         width: size?.width,
         height: size?.height,

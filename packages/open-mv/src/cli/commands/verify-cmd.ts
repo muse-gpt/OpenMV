@@ -24,6 +24,8 @@ export function registerVerifyCommand(cli: Cli): void {
         .option('--lines <file>', 'cli.opt.lines')
         .option('--sections <file>', 'cli.opt.sections')
         .option('--palette <id>', 'cli.opt.palette')
+        .option('--camera <id>', 'cli.opt.camera')
+        .option('--style <id>', 'cli.opt.style')
         .option('--size <WxH>', 'cli.opt.size')
         .option('--fps <n>', 'cli.opt.fps')
         .option('--drums <preset>', 'cli.opt.drums')
