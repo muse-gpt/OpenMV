@@ -19,7 +19,7 @@ export type { MvCamera, MvPalette, MvTextStyle } from './presets.js';
 export { beatGrid, divider, lyricMv } from './mv.js';
 export type { BeatGrid, LyricLineInput, LyricMvOptions, LyricVoiceInput } from './mv.js';
 
-export { analyzePcm, analyzeWav, readWavPcm } from './song.js';
+export { analyzeWav } from './song.js';
 export type { SectionKind, SongProfile, SongSection } from './song.js';
 
 export { compileSongMv, planGrid, planSongMv } from './plan.js';

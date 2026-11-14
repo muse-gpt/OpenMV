@@ -10,7 +10,9 @@
         "url": "https://github.com/nyar-os/OpenMV.git"
     },
     "scripts": {
-        "build": "pnpm --filter @wae/open-mv run build",
+        "build": "pnpm run build:napi && pnpm run build:ts",
+        "build:ts": "pnpm --filter @wae/open-mv run build",
+        "build:napi": "cargo build -p openmv-napi --release && node scripts/stage-native.mjs",
         "typecheck": "pnpm --filter @wae/open-mv run typecheck",
         "presets": "pnpm run build && node packages/open-mv/dist/cli/main.js presets",
         "analyze": "pnpm run build && node packages/open-mv/dist/cli/main.js analyze",

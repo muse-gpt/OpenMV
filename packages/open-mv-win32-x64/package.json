@@ -1,0 +1,12 @@
+{
+    "name": "@wae/open-mv-win32-x64",
+    "version": "0.0.1",
+    "description": "OpenMV native addon for Windows x64",
+    "license": "Apache-2.0",
+    "os": ["win32"],
+    "cpu": ["x64"],
+    "main": "./open-mv.win32-x64.node",
+    "files": [
+        "open-mv.win32-x64.node"
+    ]
+}

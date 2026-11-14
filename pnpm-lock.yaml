@@ -36,6 +36,12 @@ importers:
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
+    optionalDependencies:
+      '@wae/open-mv-win32-x64':
+        specifier: workspace:*
+        version: link:../open-mv-win32-x64
+
+  packages/open-mv-win32-x64: {}
 
 packages:
 

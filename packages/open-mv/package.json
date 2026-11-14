@@ -40,6 +40,9 @@
         "url": "git+https://github.com/nyar-os/OpenMV.git",
         "directory": "packages/open-mv"
     },
+    "optionalDependencies": {
+        "@wae/open-mv-win32-x64": "workspace:*"
+    },
     "dependencies": {
         "@wae/commander": "^0.0.6",
         "@wae/open-cut": "link:../../../OpenCut/packages/open-cut"
