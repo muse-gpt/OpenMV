@@ -1,0 +1,8 @@
+node_modules/
+dist/
+target/
+*.mp4
+*.wav
+*.png
+.DS_Store
+*.log

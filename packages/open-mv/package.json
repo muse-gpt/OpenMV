@@ -1,0 +1,51 @@
+{
+    "name": "@wae/open-mv",
+    "version": "0.0.1",
+    "description": "Music-video authoring: MV presets (palettes, camera moves, lyric styles), beat-grid builders and skills on top of the OpenCut engine",
+    "license": "Apache-2.0",
+    "type": "module",
+    "bin": {
+        "open-mv": "dist/cli/main.js"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist",
+        "locales",
+        "skills"
+    ],
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "typecheck": "tsc -p tsconfig.json --noEmit"
+    },
+    "keywords": [
+        "music-video",
+        "mv",
+        "lyric",
+        "beat",
+        "open-cut",
+        "wae"
+    ],
+    "engines": {
+        "node": ">=20"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nyar-os/OpenMV.git",
+        "directory": "packages/open-mv"
+    },
+    "dependencies": {
+        "@wae/commander": "^0.0.6",
+        "@wae/open-cut": "link:../../../OpenCut/packages/open-cut"
+    },
+    "devDependencies": {
+        "@types/node": "^22.20.4",
+        "typescript": "^5.9.2"
+    }
+}

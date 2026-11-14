@@ -1,0 +1,10 @@
+{
+  "cli.intro": "open-mv — music-video presets, beat grid and lyric compilation",
+  "cli.cmd.presets": "List the MV preset catalogue (palettes, camera moves, lyric text styles)",
+  "cli.cmd.render": "Render a film module that default-exports an OpenCut Film (positional: <film.ts>)",
+  "cli.opt.output": "Output MP4 path",
+  "cli.opt.json": "Print the catalogue as JSON",
+  "cli.presets.palettes": "palettes:",
+  "cli.presets.camera": "camera moves:",
+  "cli.presets.textStyles": "text styles:"
+}

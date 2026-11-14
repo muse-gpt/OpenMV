@@ -1,0 +1,25 @@
+{
+    "name": "@wae/open-mv-workspace",
+    "private": true,
+    "type": "module",
+    "packageManager": "pnpm@10.28.0",
+    "description": "OpenMV — music-video authoring presets and skills over the OpenCut engine",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nyar-os/OpenMV.git"
+    },
+    "scripts": {
+        "build": "pnpm --filter @wae/open-mv run build",
+        "typecheck": "pnpm --filter @wae/open-mv run typecheck",
+        "presets": "pnpm run build && node packages/open-mv/dist/cli/main.js presets",
+        "render:lyric": "pnpm run build && node packages/open-mv/dist/cli/main.js render films/lyric-mv.ts -o lyric-mv.mp4",
+        "render:beat": "pnpm run build && node packages/open-mv/dist/cli/main.js render films/beat-mv.ts -o beat-mv.mp4"
+    },
+    "devDependencies": {
+        "@types/node": "^22.20.4",
+        "@wae/open-cut": "link:../OpenCut/packages/open-cut",
+        "@wae/open-mv": "link:./packages/open-mv",
+        "typescript": "^5.9.2"
+    }
+}
