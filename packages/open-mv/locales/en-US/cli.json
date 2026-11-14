@@ -13,6 +13,8 @@
   "cli.opt.plan": "Reviewed storyboard JSON to render without re-planning",
   "cli.opt.planOut": "Write the planned storyboard JSON to this file for review and later rendering",
   "cli.opt.sections": "Corrected sections JSON array overriding the analysis",
+  "cli.opt.profile": "Stored analyse profile to plan from without re-reading the WAV",
+  "cli.opt.analyzeOut": "Write the analysed profile JSON to this file for review and later planning",
   "cli.opt.drums": "Drum-groove preset id for the render",
   "cli.opt.palette": "Palette preset id",
   "cli.opt.camera": "Fixed camera-move id (default: auto)",

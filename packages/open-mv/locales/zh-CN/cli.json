@@ -13,6 +13,8 @@
   "cli.opt.plan": "复核过的分镜 JSON，直接渲染而不再重新规划",
   "cli.opt.planOut": "把分镜 JSON 写入此文件，供复核与后续渲染",
   "cli.opt.sections": "覆盖自动分析的校正段落 JSON 数组",
+  "cli.opt.profile": "已保存的解析档案，规划时不再重读 WAV",
+  "cli.opt.analyzeOut": "把解析档案写成 JSON 文件，便于审校与后续规划",
   "cli.opt.drums": "渲染时使用的鼓组节奏型预设 id",
   "cli.opt.palette": "调色板预设 id",
   "cli.opt.camera": "固定运镜 id（缺省自动选择）",

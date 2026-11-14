@@ -5,7 +5,8 @@ import type { Cli } from '@wae/commander';
 
 import { planSongMv } from '../../plan.js';
 import { analyzeWav } from '../../song.js';
-import { withSections } from '../sections.js';
+import type { SongProfile } from '../../index.js';
+import { readProfile, withSections } from '../sections.js';
 
 /**
  * Plans the storyboard script from a song without rendering.
@@ -16,9 +17,14 @@ import { withSections } from '../sections.js';
  * render, and a later render consumes the same plan.
  *
  * `--lines` reads one lyric line per non-empty, non-`#` line.
+ *
+ * `--profile` reads a stored `analyze --out` profile instead of the WAV, so a
+ * reviewed tempo and section list survives without the audio being re-analysed.
+ * It already carries sections, so it cannot be combined with `--sections`.
  */
 export function registerPlanCommand(cli: Cli): void {
     cli.command('plan', 'cli.cmd.plan')
+        .option('--profile <file>', 'cli.opt.profile')
         .option('--lines <file>', 'cli.opt.lines')
         .option('--sections <file>', 'cli.opt.sections')
         .option('--palette <id>', 'cli.opt.palette')
@@ -30,13 +36,28 @@ export function registerPlanCommand(cli: Cli): void {
         .option('--json', 'cli.opt.json')
         .actionCtx((options, _args, ctx) => {
             const file = options._[0];
-            if (!file) {
+            const profilePath = typeof options.profile === 'string' ? options.profile : undefined;
+            if (!file && profilePath === undefined) {
                 ctx.stderr('usage: open-mv plan <song.wav> [--lines lines.txt] [--size 1280x720] [--json]');
+                ctx.stderr('       open-mv plan --profile profile.json [--lines lines.txt] [--out plan.json]');
                 return 2;
             }
             try {
+                if (profilePath !== undefined && typeof options.sections === 'string') {
+                    throw new Error('--profile already carries sections, so it cannot be combined with --sections');
+                }
                 const size = parseSize(options.size);
-                const analyzed = analyzeWav(resolve(file));
+                let analyzed: SongProfile;
+                if (profilePath !== undefined) {
+                    analyzed = readProfile(profilePath);
+                }
+                else if (file !== undefined) {
+                    analyzed = analyzeWav(resolve(file));
+                }
+                else {
+                    throw new Error('a song WAV or --profile is required');
+                }
+                const source = profilePath ?? file ?? '';
                 const song = typeof options.sections === 'string' ? withSections(analyzed, options.sections) : analyzed;
                 const plan = planSongMv({
                     song,
@@ -57,7 +78,7 @@ export function registerPlanCommand(cli: Cli): void {
                     ctx.stdout(`plan written to ${options.out}`);
                 }
                 ctx.stdout(
-                    `${file}: ${plan.song.bpm.toFixed(1)} BPM · ${plan.song.beatsPerBar}/4 · ` +
+                    `${source}: ${plan.song.bpm.toFixed(1)} BPM · ${plan.song.beatsPerBar}/4 · ` +
                         `${plan.song.durationSeconds.toFixed(1)}s · ${plan.width}x${plan.height} @ ${plan.fps} fps`,
                 );
                 ctx.stdout(ctx.t('cli.plan.shots'));
