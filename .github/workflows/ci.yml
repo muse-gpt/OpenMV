@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build:
+    name: build and verify (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # The engine encodes through Media Foundation, so rendering is a
+        # Windows gate until another encoder backend lands.
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      # The MV engine lives in OpenCut; local development links it as a sibling
+      # checkout, so CI checks it out next to this repository.
+      - uses: actions/checkout@v4
+        with:
+          path: OpenMV
+      - uses: actions/checkout@v4
+        with:
+          repository: nyar-os/OpenCut
+          ref: dev
+          path: OpenCut
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: |
+            OpenCut/pnpm-lock.yaml
+            OpenMV/pnpm-lock.yaml
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build the engine
+        working-directory: OpenCut
+        run: |
+          pnpm install
+          pnpm run build
+      - name: Build the MV layer
+        working-directory: OpenMV
+        run: |
+          pnpm install
+          pnpm run build
+      - name: Verify one rendered MV
+        working-directory: OpenMV
+        run: node packages/open-mv/dist/cli/main.js verify films/beat-mv.ts --json
