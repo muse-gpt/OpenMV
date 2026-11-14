@@ -1,13 +1,16 @@
 /**
- * MV 脚本层：歌曲结构 → 分镜脚本 → Film。
+ * MV script layer: song structure → storyboard script → Film.
  *
- * 这是 OpenMV 与短片流程的分界：短片从剧本出发，MV 从**歌曲**出发。这里
- * 只做两件可检查的事：
- * 1. {@link planSongMv} 把 `SongProfile` 翻成一份可序列化、可审阅的分镜脚本；
- * 2. {@link compileSongMv} 把脚本编译成 OpenCut 的 Film。
+ * This is where the MV flow diverges from a short film: a short film starts
+ * from a script, an MV starts from the song. Only two checkable steps happen
+ * here:
+ * 1. {@link planSongMv} turns a `SongProfile` into a serializable, reviewable
+ *    storyboard script;
+ * 2. {@link compileSongMv} compiles that script into an OpenCut Film.
  *
- * 脚本与编译分开，是为了让「与歌曲匹配的短片脚本」成为可复核的产物：改脚本
- * 不必重听整首歌，改歌曲结构也不必重写画面代码。
+ * Script and compilation are separate so the script becomes a reviewable
+ * artifact: reviewing it does not require re-listening to the song, and a song
+ * structure change does not require rewriting picture code.
  */
 import { Film, colorToken, glow, grain, text } from '@wae/open-cut';
 import type { ItemInput } from '@wae/open-cut';
@@ -20,11 +23,11 @@ import type { LyricVoiceInput } from './mv.js';
 
 export interface SongLineInput {
     text: string;
-    /** 覆盖该行的字效 id。 */
+    /** Lyric-style id overriding this line. */
     style?: string;
 }
 
-/** 一个镜头：一段歌曲结构 + 它承载的歌词行。 */
+/** One shot: a song section plus the lyric lines it carries. */
 export interface SongShot {
     index: number;
     section: SongSection;
@@ -36,14 +39,14 @@ export interface SongShot {
     lines: SongLineInput[];
 }
 
-/** 可序列化的分镜脚本：审阅这一份就够了。 */
+/** A serializable storyboard script: reviewing this one object is enough. */
 export interface SongMvPlan {
     song: SongProfile;
     fps: number;
     width: number;
     height: number;
     palette: string;
-    /** `auto` 表示按段落类型与能量自动选运镜。 */
+    /** `auto` selects a camera move from section kind and energy. */
     camera: string;
     textStyle: string;
     shots: SongShot[];
@@ -51,10 +54,10 @@ export interface SongMvPlan {
 
 export interface SongMvOptions {
     song: SongProfile;
-    /** 歌词行；按顺序按镜头时长比例分配。 */
+    /** Lyric lines, distributed across shots in proportion to duration. */
     lines?: Array<string | SongLineInput>;
     palette?: string;
-    /** 固定运镜 id；缺省 `auto`。 */
+    /** Fixed camera-move id; defaults to `auto`. */
     camera?: string;
     textStyle?: string;
     fps?: number;
@@ -62,7 +65,7 @@ export interface SongMvOptions {
     height?: number;
 }
 
-/** 把歌曲结构编排成 MV 分镜脚本（不做渲染）。 */
+/** Arranges song structure into an MV storyboard script (no rendering). */
 export function planSongMv(options: SongMvOptions): SongMvPlan {
     const fps = options.fps ?? 30;
     const palette = paletteById(options.palette ?? 'neon-night');
@@ -109,18 +112,18 @@ export function planSongMv(options: SongMvOptions): SongMvPlan {
 }
 
 export interface CompileOptions {
-    /** 颗粒强度，0 关闭（默认 0.06）。 */
+    /** Grain strength, 0 disables it (default 0.06). */
     grain?: number;
-    /** 小节头与副歌起点放卡点音效（默认开）。 */
+    /** Place hit sounds at bar starts and chorus entries (default on). */
     hits?: boolean;
-    /** BGM 音量；`null` 关闭（默认 0.1）。 */
+    /** BGM volume; `null` disables it (default 0.1). */
     bgm?: number | null;
-    /** 铺一条鼓组节奏型（预设名），按歌曲 BPM 与时长铺满。 */
+    /** Fill the film with a drum-groove preset at the song BPM. */
     drums?: string | null;
     voice?: LyricVoiceInput | null;
 }
 
-/** 把脚本编译成 Film；画面、混音与编码交给 OpenCut 引擎。 */
+/** Compiles the script into a Film; picture, mixing and encoding belong to the OpenCut engine. */
 export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): Film {
     const palette = paletteById(plan.palette);
     const grid = beatGrid(plan.song.bpm, plan.fps);
@@ -220,7 +223,7 @@ export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): F
     return film;
 }
 
-/** 按权重把 `total` 行分配到各镜头（最大余数法，顺序稳定）。 */
+/** Distributes `total` lines across shots by weight (largest remainder, stable order). */
 function allocate(total: number, weights: number[]): number[] {
     const sum = weights.reduce((a, b) => a + b, 0);
     if (total === 0 || sum === 0) {
@@ -273,7 +276,7 @@ function cameraOf(id: string) {
     };
 }
 
-/** 供调用方核对：脚本里实际使用的节拍网格。 */
+/** For callers to verify: the beat grid the script actually uses. */
 export function planGrid(plan: SongMvPlan): BeatGrid {
     return beatGrid(plan.song.bpm, plan.fps);
 }

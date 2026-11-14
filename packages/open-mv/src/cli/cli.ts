@@ -11,7 +11,7 @@ export function localesRoot(): string {
     return join(dirname(fileURLToPath(import.meta.url)), '../../locales');
 }
 
-/** `open-mv` 命令树（@wae/commander，一命令一文件）。 */
+/** `open-mv` command tree (@wae/commander, one command per file). */
 export function buildMvCli() {
     const cli = createCli('open-mv')
         .locales(localesRoot(), { envKeys: ['OPEN_MV_LOCALE', 'LOCALE', 'LANG', 'LC_ALL'] })

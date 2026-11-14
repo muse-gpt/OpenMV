@@ -2,7 +2,8 @@ import type { Cli } from '@wae/commander';
 
 import { CAMERA_MOVES, PALETTES, TEXT_STYLES } from '../../index.js';
 
-/** 列出 MV 预设目录（调色板 / 运镜 / 字效），供作者与 agent 查 id。 */
+/** Lists the MV preset catalogue (palettes, camera moves, lyric styles) so
+ *  authors and agents can look up ids. */
 export function registerPresetsCommand(cli: Cli): void {
     cli.command('presets', 'cli.cmd.presets')
         .option('--json', 'cli.opt.json')

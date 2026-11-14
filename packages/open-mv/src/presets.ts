@@ -1,30 +1,31 @@
 /**
- * MV 预设：调色板、运镜与歌词字效。
+ * MV presets: palettes, camera moves and lyric styles.
  *
- * 预设只描述**可执行的作者意图**（颜色、构图、运动、字号与入场方式），
- * 不引用片名、导演或参考成片当风格参数。所有取值都落在 OpenCut 引擎
- * 已支持的字段上，因此预设升级不需要改渲染核心。
+ * A preset only describes executable authoring intent (color, framing, motion,
+ * size and entrance), never a title, director or reference film as a style
+ * parameter. Every value maps to a field OpenCut already supports, so preset
+ * upgrades never require engine changes.
  */
 import type { Background, DesignSpec, Ease } from '@wae/open-cut';
 
-/** 一套 MV 调色板：背景 + 四级文字颜色 + 光晕色。 */
+/** One MV palette: background + four text roles + a glow color. */
 export interface MvPalette {
     id: string;
     label: string;
     background: Background;
-    /** 主歌词 / 标题。 */
+    /** Primary lyric / title. */
     ink: string;
-    /** 次要与线条。 */
+    /** Secondary text and lines. */
     accent: string;
-    /** 强调词与高亮。 */
+    /** Emphasis words and highlights. */
     hot: string;
-    /** 说明与署名。 */
+    /** Captions and credits. */
     dim: string;
-    /** 辉光色（`glow` 图元）。 */
+    /** Glow color used by the `glow` primitive. */
     glow: string;
 }
 
-/** 一次镜头运动：起止推拉、焦点与缓动。 */
+/** One camera move: start/end zoom, focus and easing. */
 export interface MvCamera {
     id: string;
     label: string;
@@ -35,19 +36,19 @@ export interface MvCamera {
     ease: Ease;
 }
 
-/** 歌词字效：字号、颜色角色、入场位移与错峰。 */
+/** Lyric style: size, color role, entrance rise and stagger. */
 export interface MvTextStyle {
     id: string;
     label: string;
     size: number;
     bold?: boolean;
-    /** 颜色角色，渲染时从调色板取色。 */
+    /** Color role resolved from the palette at render time. */
     color: 'ink' | 'hot' | 'accent' | 'dim';
-    /** 每个字上浮的像素。 */
+    /** Per-glyph rise in pixels. */
     rise?: number;
-    /** 两个字之间的错峰帧数。 */
+    /** Stagger in frames between two glyphs. */
     stagger?: number;
-    /** 是否带一层调色板辉光。 */
+    /** Whether to add one palette glow layer. */
     glow?: boolean;
     align?: 'left' | 'center' | 'right';
 }
@@ -156,17 +157,18 @@ export function textStyleById(id: string): MvTextStyle {
     return style;
 }
 
-/** 颜色角色解析：字效与图元共用同一套调色板查找。 */
+/** Resolves a color role from the palette; styles and primitives share this lookup. */
 export function paletteColor(palette: MvPalette, role: MvTextStyle['color']): string {
     return palette[role];
 }
 
 /**
- * 调色板 → 语义色卡。
+ * Palette → semantic color card.
  *
- * MV 的预设色不再散落在每个图元上：编译时把调色板声明成项目级 `design` 卡，
- * 画面只引用 `$ink` / `$accent` / `$bg0` 等角色。换主题＝换卡片，不改任何
- * 图元，也不会与场景级覆盖冲突。
+ * MV preset colors no longer live on every primitive: compilation declares the
+ * palette as a project-level `design` card and the picture references roles such
+ * as `$ink`, `$accent` and `$bg0`. Switching themes means switching the card,
+ * without touching a single item or fighting scene-level overrides.
  */
 export function paletteDesign(palette: MvPalette): DesignSpec {
     const colors: NonNullable<DesignSpec['colors']> = [
@@ -197,7 +199,7 @@ export function paletteDesign(palette: MvPalette): DesignSpec {
     return { colors };
 }
 
-/** 调色板 → 只含 `$bg*` 角色的背景，和 [`paletteDesign`] 成对使用。 */
+/** Palette → background that only references `$bg*` roles; pair with {@link paletteDesign}. */
 export function paletteBackground(palette: MvPalette): Background {
     const background = palette.background;
     switch (background.kind) {

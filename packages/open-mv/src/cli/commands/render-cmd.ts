@@ -4,14 +4,16 @@ import { pathToFileURL } from 'node:url';
 import type { Cli } from '@wae/commander';
 
 /**
- * 渲染一个导出 `Film` 的 MV 模块。
+ * Renders an MV module that default-exports a `Film`.
  *
- * 影片文件只描述作者意图并默认导出 Film；画面合成、混音与编码全部由
- * OpenCut 引擎完成。路径按当前工作目录解析，模块必须是 `.ts`/`.js`。
+ * The film file only describes authoring intent and exports the film; picture
+ * compositing, mixing and encoding all run in the OpenCut engine. Paths resolve
+ * against the current working directory and the module must be `.ts`/`.js`.
  */
 export function registerRenderCommand(cli: Cli): void {
     cli.command('render', 'cli.cmd.render')
         .option('-o, --output <file>', 'cli.opt.output')
+        .option('--json', 'cli.opt.json')
         .actionCtx(async (options, _args, ctx) => {
             const filmPath = options._[0];
             const out = typeof options.output === 'string' ? options.output : undefined;
@@ -33,6 +35,10 @@ export function registerRenderCommand(cli: Cli): void {
                 backend: string;
                 audio: boolean;
             };
+            if (options.json === true) {
+                ctx.stdout(JSON.stringify(stats, null, 2));
+                return 0;
+            }
             ctx.stdout(
                 `${stats.out} ${stats.bytes} bytes · ${stats.frames} frames (${stats.seconds.toFixed(1)}s) · ${stats.backend}` +
                     (stats.audio ? ' · audio' : ''),

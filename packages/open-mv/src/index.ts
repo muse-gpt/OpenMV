@@ -1,9 +1,11 @@
 /**
- * `@wae/open-mv` — MV 创作层：预设目录 + 节拍/歌词构造器。
+ * `@wae/open-mv` — MV authoring layer: preset catalogue plus beat and lyric
+ * builders.
  *
- * 引擎与作者面来自 OpenCut（与 `MIT/Apache` 同源的上游包），本包只增加
- * MV 领域的东西：调色板、运镜、字效、节拍网格、歌词行编译器与创作 skills。
- * 每个导出都是独立小函数或纯数据，CLI 只是它们的薄壳。
+ * The engine and authoring primitives come from OpenCut; this package only adds
+ * MV-domain pieces: palettes, camera moves, lyric styles, beat grids, lyric
+ * compilers and authoring skills. Every export is an independent small function
+ * or plain data; the CLI is a thin shell over them.
  */
 export {
     CAMERA_MOVES,

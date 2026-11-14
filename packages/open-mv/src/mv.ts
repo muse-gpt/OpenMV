@@ -1,10 +1,11 @@
 /**
- * MV 构造器：把「歌词行 + 节拍」编译成 OpenCut 的 Film。
+ * MV builders: compile lyric lines and beats into an OpenCut Film.
  *
- * 这里不实现渲染，也不复制引擎：画面、混音与编码全部由 OpenCut 的能力面
- * 完成，本层只负责把 MV 领域的作者意图（歌词、拍号、调色板、运镜、字效）
- * 落成场景与音轨。时间在作者层一律用秒与拍，帧换算由 {@link beatGrid}
- * 与引擎统一完成。
+ * Nothing is rendered here and the engine is not copied: picture, mixing and
+ * encoding all belong to OpenCut. This layer only lowers MV authoring intent
+ * (lyrics, meter, palette, camera, lyric style) into scenes and tracks. Time in
+ * the authoring layer is always seconds and beats; {@link beatGrid} owns the
+ * frame conversion together with the engine.
  */
 import { Film, colorToken, glow, grain, shape, text } from '@wae/open-cut';
 import type { Onset, Vowel } from '@wae/open-cut';
@@ -12,7 +13,7 @@ import type { Onset, Vowel } from '@wae/open-cut';
 import { cameraById, paletteBackground, paletteById, paletteDesign, textStyleById } from './presets.js';
 import type { MvCamera, MvPalette, MvTextStyle } from './presets.js';
 
-/** 节拍网格：BPM 与帧率之间的唯一换算所有者。 */
+/** Beat grid: the single owner of BPM-to-frame conversion. */
 export interface BeatGrid {
     fps: number;
     bpm: number;
@@ -24,7 +25,7 @@ export interface BeatGrid {
     framesOf(beats: number): number;
 }
 
-/** 由 BPM 与帧率建立节拍网格（4/4 拍，一小节 4 拍）。 */
+/** Builds a beat grid from BPM and frame rate (4/4, four beats per bar). */
 export function beatGrid(bpm: number, fps: number): BeatGrid {
     if (!Number.isFinite(bpm) || bpm <= 0) {
         throw new Error(`beatGrid: bpm must be positive, got ${bpm}`);
@@ -45,59 +46,60 @@ export function beatGrid(bpm: number, fps: number): BeatGrid {
     };
 }
 
-/** 一行歌词。 */
+/** One lyric line. */
 export interface LyricLineInput {
     text: string;
-    /** 这一行占几拍（默认 4 拍 = 一小节）。 */
+    /** Beats this line occupies (default 4 = one bar). */
     beats?: number;
-    /** 这一行的字效 id（覆盖整片默认字效）。 */
+    /** Lyric-style id for this line (overrides the film default). */
     style?: string;
 }
 
-/** 一段合成歌声（`media.voice` 合同，5 元音 × 7 起音类）。 */
+/** One synthesized vocal phrase (the `media.voice` contract: five vowels × seven onset classes). */
 export interface LyricVoiceInput {
     syllables: Array<{ onset?: Onset; vowel: Vowel; pitch: number; beats: number }>;
-    /** 起唱秒数；缺省与第一行歌词同时开始。 */
+    /** Start time in seconds; defaults to the first lyric line. */
     at?: number;
     volume?: number;
     breath?: number;
     seed?: number;
 }
 
-/** MV 构造选项。 */
+/** MV builder options. */
 export interface LyricMvOptions {
     lines: LyricLineInput[];
-    /** 曲速，默认 100 BPM。 */
+    /** Tempo, default 100 BPM. */
     tempoBpm?: number;
     fps?: number;
     width?: number;
     height?: number;
-    /** 调色板 id，默认 `neon-night`。 */
+    /** Palette id, default `neon-night`. */
     palette?: string;
-    /** 运镜 id，默认 `push-in`。 */
+    /** Camera-move id, default `push-in`. */
     camera?: string;
-    /** 片头标题（占 `titleBeats` 拍）。 */
+    /** Opening title (occupies `titleBeats` beats). */
     title?: string;
     titleBeats?: number;
-    /** 全片默认字效 id，默认 `lyric-clean`。 */
+    /** Film-wide default lyric style, default `lyric-clean`. */
     textStyle?: string;
-    /** BGM 音量；`null` 关闭。 */
+    /** BGM volume; `null` disables it. */
     bgm?: number | null;
-    /** 每个歌词行起点放一个卡点音效。 */
+    /** Place one hit sound at the start of every lyric line. */
     hits?: boolean;
-    /** 合成歌声；缺省则只有画面与 BGM。 */
+    /** Synthesized vocal; omitted means picture and BGM only. */
     voice?: LyricVoiceInput | null;
-    /** 铺一条鼓组节奏型（预设名），按 `tempoBpm` 铺满全片。 */
+    /** Fill the film with a drum-groove preset at `tempoBpm`. */
     drums?: string | null;
-    /** 颗粒强度，0 关闭。 */
+    /** Grain strength, 0 disables it. */
     grain?: number;
 }
 
 /**
- * 把歌词行编译为一条 MV。
+ * Compiles lyric lines into one MV.
  *
- * 每一行是一个场景，时长按拍数换算；字效、调色板与运镜都来自预设目录。
- * 未知的预设 id、空歌词或非法 BPM 会显式抛错，不做静默回退。
+ * Every line becomes a scene whose duration comes from its beat count; style,
+ * palette and camera come from the preset catalogue. Unknown preset ids, empty
+ * lyrics or an invalid BPM throw explicitly instead of falling back silently.
  */
 export function lyricMv(options: LyricMvOptions): Film {
     if (options.lines.length === 0) {
@@ -231,7 +233,7 @@ function titleText(title: string, duration: number, style: MvTextStyle) {
     });
 }
 
-/** 一条水平装饰线，用于歌词段落之间的留白。 */
+/** One horizontal divider line, used as breathing room between lyric sections. */
 export function divider(options: { at: number; dur: number; y?: number; color: string; width?: number }) {
     return shape({
         at: options.at,

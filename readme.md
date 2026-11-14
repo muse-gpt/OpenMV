@@ -1,125 +1,145 @@
 # OpenMV
 
-MV（音乐影像）创作层：**歌曲优先的流程 + 预设 + skills**，渲染引擎与 OpenCut 完全相同。
+Music-video authoring: **song-first workflow + presets + skills**. The rendering
+engine is exactly OpenCut.
 
-OpenMV 不复制播放器、合成器或编码器——画面、混音与 MP4 输出都由 OpenCut
-引擎完成。它只提供 MV 领域需要的东西：歌曲解析、分镜脚本、调色板、运镜、
-歌词字效、节拍网格，以及给 agent 用的创作 skills。
+OpenMV does not copy a player, synthesizer or encoder — picture, mixing and MP4
+output all run in the OpenCut engine. It only adds what an MV needs: song
+analysis, storyboard scripts, palettes, camera moves, lyric styles, beat grids
+and authoring skills for agents.
 
-## 流程：MV 与短片相反
+## Workflow: MV runs opposite to a short film
 
 ```
-AI 短片制作：剧本 → 脚本 → 音乐          （以剧本为基础生成视频）
-AI MV 制作：  歌曲 → 音乐结构 → 与歌曲匹配的脚本 → 画面
+AI short film: script → code → music        (generate video from a script)
+AI MV:         song → musical structure → script matched to the song → picture
 ```
 
-短片从剧本出发，音乐是配乐；MV 从歌曲出发，画面必须服从已经存在的音乐。
-因此 OpenMV 的入口是 `analyze`，中间产物是一份**可审阅的分镜脚本**，最后才是
-`compile` 与 `render`：
+A short film starts from a script with music as score; an MV starts from an
+existing song, and the picture has to obey that music. The entry point is
+`analyze`, the intermediate artifact is a **reviewable storyboard script**, and
+only then come `compile` and `render`:
 
 ```
 song.wav ──analyze──> SongProfile ──planSongMv──> SongMvPlan ──compileSongMv──> Film ──> MP4
-                      (BPM/拍偏移/段落/能量)      (镜头/运镜/字效/歌词行)          (OpenCut)
+                      (BPM/beat offset/          (shots/camera/lyric            (OpenCut)
+                       sections/energy)           styles/lyric lines)
 ```
 
-脚本是纯数据，可以先打印、改拍点、换运镜，再编译；改音乐结构不需要重写画面代码。
+The script is plain data: print it, retime it, swap camera moves, then compile.
+Changing the song structure never requires rewriting picture code.
 
-| 层 | 归属 |
+| Layer | Owner |
 | --- | --- |
-| 渲染引擎、场景 IR、音效/歌声合成、编码 | OpenCut（`@wae/open-cut`）与共享 `media.*` 核心 |
-| 歌曲解析、分镜脚本、MV 预设与构造器 | 本仓 `@wae/open-mv` |
-| MV 创作方法论 | 本仓 `packages/open-mv-skills` |
+| Rendering engine, scene IR, sound/voice synthesis, encoding | OpenCut (`@wae/open-cut`) and the shared `media.*` core |
+| Song analysis, storyboard scripts, MV presets and builders | `@wae/open-mv` in this repository |
+| MV authoring methodology | `packages/open-mv-skills` in this repository |
 
-## 快速开始
+## Quick start
 
 ```bash
 pnpm install
 pnpm build
-pnpm presets                     # 调色板 / 运镜 / 字效目录
-pnpm analyze song.wav            # BPM、拍偏移、段落与能量
-pnpm render:song                 # -> song-mv.mp4（24s，歌曲优先流程）
-pnpm render:lyric                # -> lyric-mv.mp4（12.5s，歌词行直编）
-pnpm render:beat                 # -> beat-mv.mp4（8s，逐拍卡点）
+pnpm presets                     # palette / camera / lyric-style catalogue
+pnpm analyze song.wav            # BPM, beat offset, sections and energy
+pnpm render:song                 # -> song-mv.mp4 (24s, song-first flow)
+pnpm render:lyric                # -> lyric-mv.mp4 (12.5s, direct lyric compile)
+pnpm render:beat                 # -> beat-mv.mp4 (8s, per-beat hits)
 ```
 
-本地开发时 `@wae/open-cut` 通过 `link:` 指向同工作区的 OpenCut 检出，因此需要：
+Local development links `@wae/open-cut` to a sibling OpenCut checkout, so you
+need:
 
-1. 相邻目录存在 `OpenCut` 检出；
-2. OpenCut 的 `packages/open-cut` 已构建（`pnpm build:ts`）；
-3. OpenCut 的原生绑定已构建并 staged（`pnpm build:napi`）。
+1. an `OpenCut` checkout next to this repository;
+2. OpenCut's `packages/open-cut` built (`pnpm build:ts`);
+3. OpenCut's native binding built and staged (`pnpm build:napi`).
 
-发布到 npm 时把 `link:` 换成版本号即可，代码无需改动。
+For npm publishing, replace the `link:` spec with a version — no code changes.
 
-## 歌曲 → 脚本 → 成片
+## Song → script → film
 
 ```ts
 import { analyzeWav, planSongMv, compileSongMv } from '@wae/open-mv';
 
-const song = analyzeWav('song.wav');          // 1. 歌曲事实
-const plan = planSongMv({                      // 2. 分镜脚本（可打印/审阅）
+const song = analyzeWav('song.wav');          // 1. song facts
+const plan = planSongMv({                      // 2. storyboard script (printable)
     song,
     palette: 'dusk-film',
-    lines: ['把名字写进旧档案', '我在副歌里重写一遍'],
+    lines: ['Write the name into the archive', 'I rewrite it in the chorus'],
 });
-console.log(JSON.stringify(plan, null, 2));    //    脚本是纯数据
-export default compileSongMv(plan, { grain: 0.05 }); // 3. 编译成 Film
+console.log(JSON.stringify(plan, null, 2));    //    the script is plain data
+export default compileSongMv(plan, { grain: 0.05 }); // 3. compile into a Film
 ```
 
-渲染：`open-mv render films/song-mv.ts -o out.mp4`。
+Render with `open-mv render films/song-mv.ts -o out.mp4`.
 
-脚本规则（固定、可预测）：
+Script rules (fixed and predictable):
 
-- 每个歌曲段落一个镜头；镜头运镜按段落类型与能量选：副歌高能 `rise`、副歌 `settle`、
-  首尾 `pull-out`、主歌 `push-in` / `drift-left` 交替。
-- 字效同样按段落：副歌 `lyric-glow`（能量 ≥ 0.85 用 `lyric-big`）、首尾 `caption`、
-  主歌用默认值。
-- 歌词行按镜头时长比例分配（最大余数法），可对单行覆盖字效。
-- 卡点：每小节一个 `tick`，每个副歌起点一个 `impact`、前一拍一个 `riser`。
+- One shot per song section; the camera move follows section kind and energy:
+  high-energy chorus `rise`, chorus `settle`, intro/outro `pull-out`, verse
+  alternates `push-in` / `drift-left`.
+- Lyric style follows the section too: chorus `lyric-glow` (`lyric-big` when
+  energy ≥ 0.85), intro/outro `caption`, verse uses the default.
+- Lyric lines are distributed across shots in proportion to duration (largest
+  remainder), with optional per-line style overrides.
+- Hits: one `tick` per bar, one `impact` at every chorus start and one `riser`
+  one beat before it.
 
-不想先解析歌曲时，`lyricMv({ lines, tempoBpm, ... })` 仍是“歌词直编”快捷路径。
+`lyricMv({ lines, tempoBpm, ... })` remains the shortcut when you do not want to
+analyze a song first.
 
-## 歌曲解析的合同
+## Song analysis contract
 
-- 只接受 **PCM WAV**（16/24 bit 整数或 32 bit 浮点）。其他容器先转 WAV，
-  不做隐式解码、不猜采样率；格式不符直接报错。
-- 算法全确定性：短时能量 → 起音强度 → 自相关测速（抛物线插值）→ 拍相位 →
-  按最响 10% 帧的小节能量分段。没有随机、没有训练模型。
-- 段落类型由能量与位置判定，是**辅助判断而不是事实**：脚本是数据，跑完
-  `analyze` 后应按听感修正段落边界或类型，再编译。
-- 边界按小节对齐，跨段落的半小节会被归到能量更接近的一侧；短于两小节的首尾
-  段落会保留（短前奏/尾奏是真实的），内部碎段会并回邻居。
+- Only **PCM WAV** (16/24-bit integer or 32-bit float). Convert other containers
+  to WAV first: no implicit decoding and no guessed sample rate.
+- Fully deterministic: short-time energy → onset strength → autocorrelation
+  tempo detection (parabolic interpolation) → beat phase → bar segmentation by
+  the loudest 10% frames. No randomness, no trained model.
+- Section kinds are **heuristics, not facts**: the script is data, so adjust
+  section boundaries or kinds after listening before compiling.
+- Boundaries align to bars; a half-bar crossing a boundary joins the closer
+  side. Very short first/last sections are kept (short intros/outros are real),
+  short internal runs merge into a neighbour.
 
-## 预设与 skills
+## Presets and skills
 
-- 预设：`PALETTES`（6 套）、`CAMERA_MOVES`（6 种）、`TEXT_STYLES`（5 种），
-  以及 `beatGrid` / `lyricMv` / `divider`。id 是稳定合同。
-- **主题 = 色卡**：`paletteDesign()` 把调色板编译成项目级语义色卡，
-  `paletteBackground()` 只产出 `$bg0` / `$bg1` 等角色引用；字效与辉光同样走
-  `$ink` / `$accent` / `$glow`。换调色板只换卡片，不改任何图元和渲染代码，
-  场景级覆盖也走同一套解析与锁定规则。
-- 鼓组：`lyricMv` 与 `compileSongMv` 都接受 `drums: '<节奏型名>'`（如
-  `four-on-floor`、`half-time`、`lofi`），按歌曲 BPM 铺满全片；音色与节奏型
-  由共享合成核心生成（17 件乐器 + 8 种鼓点），不依赖任何音频素材。
-- skills：`packages/open-mv-skills`（歌曲解析与脚本）、`packages/open-mv-skills`
-  （整体气质与能量曲线）、`packages/open-mv-skills`（歌词排期与字效）、
-  `packages/open-mv-skills`（卡点与音效落点）。
-- 目录细节见 `packages/open-mv-skills`。
+- Presets: `PALETTES` (6), `CAMERA_MOVES` (6), `TEXT_STYLES` (5), plus
+  `beatGrid` / `lyricMv` / `divider`. Ids are a stable contract.
+- **Theme = color card**: `paletteDesign()` compiles a palette into a
+  project-level semantic card and `paletteBackground()` emits only `$bg0` /
+  `$bg1` role references; lyric text and glow use `$ink` / `$accent` / `$glow`.
+  Switching palettes swaps the card without touching items or render code, and
+  scene-level overrides follow the same resolution and locking rules.
+- Drums: `lyricMv` and `compileSongMv` accept `drums: '<pattern>'` (for example
+  `four-on-floor`, `half-time`, `lofi`) and fill the film at the song BPM; both
+  timbre and pattern come from the shared synthesis core (17 instruments, 8
+  grooves) with no audio assets.
+- Skills: `packages/open-mv-skills` — song (analysis and script), director
+  (overall mood and energy curve), lyric (line scheduling and styles), beat
+  (hits and sound placement).
+- See `packages/open-mv-skills/open-mv-director/references/presets.md` for the
+  catalogue details.
 
-## 当前边界
+## Current boundaries
 
-- 场景之间是硬切；引擎没有转场与多轨合成。
-- 合成歌声只有 5 个元音 × 7 类起音，不能逐字唱任意歌词；真实人声请导入音频并
-  声明为外部素材。
-- 歌曲解析只给结构初稿，不承诺对任意风格都准确；不分析调性、和弦与音色。
-- 不含素材库；图片/视频需要自行提供路径。
-- 验收依赖实际渲染抽查（`ffmpeg -af volumedetect` + 抽帧），不以「能出文件」代替成片。
+- Hard cuts between scenes; the engine has no transitions or multi-track
+  compositing.
+- Synthesized singing covers 5 vowels × 7 onset classes and cannot sing
+  arbitrary lyrics word by word; use imported audio for real voices.
+- Song analysis gives a structural first draft, not a guarantee for every
+  genre; it does not analyze key, chords or timbre.
+- No asset library; provide image/video paths yourself.
+- Acceptance relies on real render inspection (`ffmpeg -af volumedetect` plus
+  frame grabs), never on "a file was produced".
 
-## 示例
+## Examples
 
-- `films/song-mv.ts` — 歌曲优先：歌曲结构 → 分镜脚本 → 成片（24s）。
-- `films/lyric-mv.ts` — 歌词直编：1 个片头 + 4 行歌词，合成歌声与卡点。
-- `films/beat-mv.ts` — 卡点：4 小节，每拍 tick、小节头 impact、收尾 riser。
+- `films/song-mv.ts` — song-first: song structure → storyboard → film (24s).
+- `films/lyric-mv.ts` — direct lyric compile: one intro + four lyric lines with
+  synthesized singing and hits (12.5s).
+- `films/beat-mv.ts` — per-beat hits: four bars, one tick per beat, an impact at
+  every bar start and a closing riser (8s).
 
-## 许可证
+## License
 
-Apache-2.0，见 [License.md](License.md)。
+Apache-2.0, see [License.md](License.md).

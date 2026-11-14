@@ -5,10 +5,11 @@ import type { Cli } from '@wae/commander';
 import { analyzeWav } from '../../song.js';
 
 /**
- * 分析歌曲 WAV：输出 BPM、拍偏移与段落结构。
+ * Analyzes a song WAV: prints BPM, beat offset and section structure.
  *
- * 这是 MV 流程的第一步（歌曲 → 音乐结构 → 脚本 → 画面）。只接受 PCM WAV；
- * 其他容器先转换，不做隐式解码。
+ * This is the first step of the MV flow (song → musical structure → script →
+ * picture). Only PCM WAV is accepted; convert other containers first instead of
+ * decoding implicitly.
  */
 export function registerAnalyzeCommand(cli: Cli): void {
     cli.command('analyze', 'cli.cmd.analyze')
