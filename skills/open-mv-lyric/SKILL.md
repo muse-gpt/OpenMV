@@ -22,7 +22,8 @@ description: 歌词排期与字效。需要把歌词按拍排进 MV、决定每�
 ## 工作流
 
 1. 逐行数实际字重与停顿，标出换气点；必要时按语义拆行，不要按字数机械等分。
-2. 用 `lyricMv({ lines, tempoBpm, fps })` 生成基础时间线，`lines[i].beats` 写拍数。
+2. 有歌曲文件时先 `open-mv analyze` 拿段落，再由 `planSongMv` 按镜头时长比例分配歌词行
+   （脚本层做分配，不要手写每行秒数）。没有歌曲结构时用 `lyricMv({ lines, tempoBpm, fps })`。
 3. 需要强调的行加 `style: 'lyric-big'`，整片默认字效用 `textStyle`。
 4. 有片头标题时用 `title` + `titleBeats`，标题会占用开头拍数，歌词顺延。
 5. 需要合成歌声时给 `voice.syllables`；它只支持 5 个元音与 7 类起音，无法逐字唱中文。要真实歌词演唱就导入音频并声明为外部素材。
