@@ -6,10 +6,10 @@
  * 落成场景与音轨。时间在作者层一律用秒与拍，帧换算由 {@link beatGrid}
  * 与引擎统一完成。
  */
-import { Film, glow, grain, shape, text } from '@wae/open-cut';
+import { Film, colorToken, glow, grain, shape, text } from '@wae/open-cut';
 import type { Onset, Vowel } from '@wae/open-cut';
 
-import { cameraById, paletteById, paletteColor, textStyleById } from './presets.js';
+import { cameraById, paletteBackground, paletteById, paletteDesign, textStyleById } from './presets.js';
 import type { MvCamera, MvPalette, MvTextStyle } from './presets.js';
 
 /** 节拍网格：BPM 与帧率之间的唯一换算所有者。 */
@@ -111,7 +111,7 @@ export function lyricMv(options: LyricMvOptions): Film {
     const defaultStyle = textStyleById(options.textStyle ?? 'lyric-clean');
     const grainStrength = options.grain ?? 0.06;
 
-    const film = new Film({ width: options.width ?? 1920, height: options.height ?? 1080, fps });
+    const film = new Film({ width: options.width ?? 1920, height: options.height ?? 1080, fps }).design(paletteDesign(palette));
     let cursor = 0;
     const lineStarts: number[] = [];
 
@@ -119,11 +119,11 @@ export function lyricMv(options: LyricMvOptions): Film {
         const duration = grid.secondsOf(options.titleBeats ?? 4);
         film.scene({
             duration,
-            background: palette.background,
+            background: paletteBackground(palette),
             camera: cameraOf(camera),
             items: [
-                glow({ at: 0, dur: duration, x: 0.5, y: 0.46, radius: 0.4, color: palette.glow, intensity: 0.5 }),
-                titleText(options.title, duration, textStyleById('title-stack'), palette),
+                glow({ at: 0, dur: duration, x: 0.5, y: 0.46, radius: 0.4, color: colorToken('glow'), intensity: 0.5 }),
+                titleText(options.title, duration, textStyleById('title-stack')),
                 ...(grainStrength > 0 ? [grain({ at: 0, dur: duration, strength: grainStrength, density: 14000 })] : []),
             ],
         });
@@ -136,11 +136,11 @@ export function lyricMv(options: LyricMvOptions): Film {
         lineStarts.push(cursor);
         film.scene({
             duration,
-            background: palette.background,
+            background: paletteBackground(palette),
             camera: cameraOf(camera),
             items: [
                 ...(style.glow
-                    ? [glow({ at: 0, dur: duration, x: 0.5, y: 0.5, radius: 0.36, color: palette.glow, intensity: 0.4 })]
+                    ? [glow({ at: 0, dur: duration, x: 0.5, y: 0.5, radius: 0.36, color: colorToken('glow'), intensity: 0.4 })]
                     : []),
                 text({
                     at: 0,
@@ -149,11 +149,11 @@ export function lyricMv(options: LyricMvOptions): Film {
                     y: 0.5,
                     size: style.size,
                     bold: style.bold,
-                    color: paletteColor(palette, style.color),
+                    color: colorToken(style.color),
                     align: style.align ?? 'center',
                     rise: style.rise ?? 0,
                     stagger: style.stagger ?? 1,
-                    glow: style.glow ? palette.glow : undefined,
+                    glow: style.glow ? colorToken('glow') : undefined,
                 }),
                 ...(grainStrength > 0 ? [grain({ at: 0, dur: duration, strength: grainStrength, density: 14000 })] : []),
             ],
@@ -216,7 +216,7 @@ function cameraOf(camera: MvCamera) {
     };
 }
 
-function titleText(title: string, duration: number, style: MvTextStyle, palette: MvPalette) {
+function titleText(title: string, duration: number, style: MvTextStyle) {
     return text({
         at: 0,
         dur: duration,
@@ -224,10 +224,10 @@ function titleText(title: string, duration: number, style: MvTextStyle, palette:
         y: 0.46,
         size: style.size,
         bold: style.bold,
-        color: paletteColor(palette, style.color),
+        color: colorToken(style.color),
         rise: style.rise ?? 0,
         stagger: style.stagger ?? 1,
-        glow: style.glow ? palette.glow : undefined,
+        glow: style.glow ? colorToken('glow') : undefined,
     });
 }
 

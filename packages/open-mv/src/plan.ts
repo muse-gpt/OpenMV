@@ -9,10 +9,10 @@
  * 脚本与编译分开，是为了让「与歌曲匹配的短片脚本」成为可复核的产物：改脚本
  * 不必重听整首歌，改歌曲结构也不必重写画面代码。
  */
-import { Film, glow, grain, text } from '@wae/open-cut';
+import { Film, colorToken, glow, grain, text } from '@wae/open-cut';
 import type { ItemInput } from '@wae/open-cut';
 
-import { cameraById, paletteById, paletteColor, textStyleById } from './presets.js';
+import { cameraById, paletteBackground, paletteById, paletteDesign, textStyleById } from './presets.js';
 import { beatGrid } from './mv.js';
 import type { BeatGrid } from './mv.js';
 import type { SongProfile, SongSection } from './song.js';
@@ -125,7 +125,7 @@ export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): F
     const palette = paletteById(plan.palette);
     const grid = beatGrid(plan.song.bpm, plan.fps);
     const grainStrength = options.grain ?? 0.06;
-    const film = new Film({ width: plan.width, height: plan.height, fps: plan.fps });
+    const film = new Film({ width: plan.width, height: plan.height, fps: plan.fps }).design(paletteDesign(palette));
 
     for (const shot of plan.shots) {
         const duration = Math.max(0.2, shot.end - shot.start);
@@ -133,7 +133,7 @@ export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): F
         const lineDuration = shot.lines.length > 0 ? duration / shot.lines.length : duration;
         const items: ItemInput[] = [];
         if (style.glow) {
-            items.push(glow({ at: 0, dur: duration, x: 0.5, y: 0.5, radius: 0.36, color: palette.glow, intensity: 0.4 }));
+            items.push(glow({ at: 0, dur: duration, x: 0.5, y: 0.5, radius: 0.36, color: colorToken('glow'), intensity: 0.4 }));
         }
         shot.lines.forEach((line, index) => {
             const styleOfLine = line.style ? textStyleById(line.style) : style;
@@ -145,11 +145,11 @@ export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): F
                     y: 0.5,
                     size: styleOfLine.size,
                     bold: styleOfLine.bold,
-                    color: paletteColor(palette, styleOfLine.color),
+                    color: colorToken(styleOfLine.color),
                     align: styleOfLine.align ?? 'center',
                     rise: styleOfLine.rise ?? 0,
                     stagger: styleOfLine.stagger ?? 1,
-                    glow: styleOfLine.glow ? palette.glow : undefined,
+                    glow: styleOfLine.glow ? colorToken('glow') : undefined,
                 }),
             );
         });
@@ -158,7 +158,7 @@ export function compileSongMv(plan: SongMvPlan, options: CompileOptions = {}): F
         }
         film.scene({
             duration,
-            background: palette.background,
+            background: paletteBackground(palette),
             camera: cameraOf(shot.camera),
             items,
         });

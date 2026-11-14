@@ -10,8 +10,10 @@ export {
     PALETTES,
     TEXT_STYLES,
     cameraById,
+    paletteBackground,
     paletteById,
     paletteColor,
+    paletteDesign,
     textStyleById,
 } from './presets.js';
 export type { MvCamera, MvPalette, MvTextStyle } from './presets.js';

@@ -5,7 +5,7 @@
  * 不引用片名、导演或参考成片当风格参数。所有取值都落在 OpenCut 引擎
  * 已支持的字段上，因此预设升级不需要改渲染核心。
  */
-import type { Background, Ease } from '@wae/open-cut';
+import type { Background, DesignSpec, Ease } from '@wae/open-cut';
 
 /** 一套 MV 调色板：背景 + 四级文字颜色 + 光晕色。 */
 export interface MvPalette {
@@ -159,4 +159,59 @@ export function textStyleById(id: string): MvTextStyle {
 /** 颜色角色解析：字效与图元共用同一套调色板查找。 */
 export function paletteColor(palette: MvPalette, role: MvTextStyle['color']): string {
     return palette[role];
+}
+
+/**
+ * 调色板 → 语义色卡。
+ *
+ * MV 的预设色不再散落在每个图元上：编译时把调色板声明成项目级 `design` 卡，
+ * 画面只引用 `$ink` / `$accent` / `$bg0` 等角色。换主题＝换卡片，不改任何
+ * 图元，也不会与场景级覆盖冲突。
+ */
+export function paletteDesign(palette: MvPalette): DesignSpec {
+    const colors: NonNullable<DesignSpec['colors']> = [
+        { role: 'ink', value: palette.ink },
+        { role: 'accent', value: palette.accent },
+        { role: 'hot', value: palette.hot },
+        { role: 'dim', value: palette.dim },
+        { role: 'glow', value: palette.glow },
+    ];
+    const background = palette.background;
+    switch (background.kind) {
+        case 'solid':
+            colors.push({ role: 'bg0', value: background.color });
+            break;
+        case 'v-gradient':
+            background.colors.forEach((color, index) => colors.push({ role: `bg${index}`, value: color }));
+            break;
+        case 'radial':
+            colors.push({ role: 'bg0', value: background.center }, { role: 'bg1', value: background.edge });
+            break;
+        case 'starfield':
+            background.base.forEach((color, index) => colors.push({ role: `bg${index}`, value: color }));
+            if (background.tint) {
+                colors.push({ role: 'bg-tint', value: background.tint });
+            }
+            break;
+    }
+    return { colors };
+}
+
+/** 调色板 → 只含 `$bg*` 角色的背景，和 [`paletteDesign`] 成对使用。 */
+export function paletteBackground(palette: MvPalette): Background {
+    const background = palette.background;
+    switch (background.kind) {
+        case 'solid':
+            return { kind: 'solid', color: '$bg0' };
+        case 'v-gradient':
+            return { kind: 'v-gradient', colors: background.colors.map((_, index) => `$bg${index}`) };
+        case 'radial':
+            return { kind: 'radial', center: '$bg0', edge: '$bg1' };
+        case 'starfield':
+            return {
+                ...background,
+                base: background.base.map((_, index) => `$bg${index}`),
+                tint: background.tint ? '$bg-tint' : undefined,
+            };
+    }
 }

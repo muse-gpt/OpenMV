@@ -26,9 +26,9 @@ song.wav ──analyze──> SongProfile ──planSongMv──> SongMvPlan ─
 
 | 层 | 归属 |
 | --- | --- |
-| 渲染引擎、场景 IR、音效/歌声合成、编码 | OpenCut（`@wae/open-cut`）与本工作区 `media.rs` |
+| 渲染引擎、场景 IR、音效/歌声合成、编码 | OpenCut（`@wae/open-cut`）与共享 `media.*` 核心 |
 | 歌曲解析、分镜脚本、MV 预设与构造器 | 本仓 `@wae/open-mv` |
-| MV 创作方法论 | 本仓 `skills/` |
+| MV 创作方法论 | 本仓 `packages/open-mv-skills` |
 
 ## 快速开始
 
@@ -93,13 +93,17 @@ export default compileSongMv(plan, { grain: 0.05 }); // 3. 编译成 Film
 
 - 预设：`PALETTES`（6 套）、`CAMERA_MOVES`（6 种）、`TEXT_STYLES`（5 种），
   以及 `beatGrid` / `lyricMv` / `divider`。id 是稳定合同。
+- **主题 = 色卡**：`paletteDesign()` 把调色板编译成项目级语义色卡，
+  `paletteBackground()` 只产出 `$bg0` / `$bg1` 等角色引用；字效与辉光同样走
+  `$ink` / `$accent` / `$glow`。换调色板只换卡片，不改任何图元和渲染代码，
+  场景级覆盖也走同一套解析与锁定规则。
 - 鼓组：`lyricMv` 与 `compileSongMv` 都接受 `drums: '<节奏型名>'`（如
   `four-on-floor`、`half-time`、`lofi`），按歌曲 BPM 铺满全片；音色与节奏型
   由共享合成核心生成（17 件乐器 + 8 种鼓点），不依赖任何音频素材。
-- skills：`skills/open-mv-song`（歌曲解析与脚本）、`skills/open-mv-director`
-  （整体气质与能量曲线）、`skills/open-mv-lyric`（歌词排期与字效）、
-  `skills/open-mv-beat`（卡点与音效落点）。
-- 目录细节见 `skills/open-mv-director/references/presets.md`。
+- skills：`packages/open-mv-skills`（歌曲解析与脚本）、`packages/open-mv-skills`
+  （整体气质与能量曲线）、`packages/open-mv-skills`（歌词排期与字效）、
+  `packages/open-mv-skills`（卡点与音效落点）。
+- 目录细节见 `packages/open-mv-skills`。
 
 ## 当前边界
 
