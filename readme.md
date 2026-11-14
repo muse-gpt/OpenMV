@@ -53,6 +53,15 @@ pnpm render:beat                 # -> beat-mv.mp4 (8s, per-beat hits)
 open-mv verify films/lyric-mv.ts --json
 ```
 
+```bash
+# Song-first in one command: analyse, plan, compile and render (no film module).
+open-mv render --song song.wav --lines lyrics.txt --sections sections.json -o mv.mp4
+```
+
+`--sections` is a JSON array of `{ kind, start, end }` entries that replaces the
+detected structure; overlapping, unordered or out-of-range entries fail
+explicitly. Use it when the analysis misreads a boundary you already know.
+
 Local development links `@wae/open-cut` to a sibling OpenCut checkout, so you
 need:
 
