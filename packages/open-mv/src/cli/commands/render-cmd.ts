@@ -34,6 +34,7 @@ export function registerRenderCommand(cli: Cli): void {
                 seconds: number;
                 backend: string;
                 audio: boolean;
+                audioLevel?: { peakDbfs: number; rmsDbfs: number; clipped: number } | null;
                 scenes?: Array<{ id: string; range: [number, number]; rendered: boolean }>;
             };
             if (options.json === true) {
@@ -44,6 +45,12 @@ export function registerRenderCommand(cli: Cli): void {
                 `${stats.out} ${stats.bytes} bytes · ${stats.frames} frames (${stats.seconds.toFixed(1)}s) · ${stats.backend}` +
                     (stats.audio ? ' · audio' : ''),
             );
+            if (stats.audioLevel) {
+                ctx.stdout(
+                    `audio level: peak ${stats.audioLevel.peakDbfs.toFixed(1)} dBFS, rms ${stats.audioLevel.rmsDbfs.toFixed(1)} dBFS` +
+                        (stats.audioLevel.clipped > 0 ? `, clipped ${stats.audioLevel.clipped}` : ''),
+                );
+            }
             for (const scene of stats.scenes ?? []) {
                 ctx.stdout(`scene ${scene.id}: frames ${scene.range[0]}..${scene.range[1]}`);
             }
