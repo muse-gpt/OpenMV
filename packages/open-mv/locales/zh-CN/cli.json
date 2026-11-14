@@ -4,6 +4,7 @@
   "cli.cmd.plan": "只生成分镜脚本、不出片（位置参数：<song.wav>）",
   "cli.cmd.presets": "列出 MV 预设目录（调色板、运镜、歌词字效）",
   "cli.cmd.render": "渲染默认导出 OpenCut Film 的影片模块（位置参数：<film.ts>）",
+  "cli.cmd.verify": "渲染到临时 MP4 并检查时长、电平、削波与场景（位置参数：<film.ts>）",
   "cli.cmd.version": "打印原生分析器版本",
   "cli.opt.output": "输出 MP4 路径",
   "cli.opt.json": "以 JSON 输出结果",

@@ -4,6 +4,7 @@
   "cli.cmd.plan": "Plan the storyboard from a song without rendering (positional: <song.wav>)",
   "cli.cmd.presets": "List the MV preset catalogue (palettes, camera moves, lyric text styles)",
   "cli.cmd.render": "Render a film module that default-exports an OpenCut Film (positional: <film.ts>)",
+  "cli.cmd.verify": "Render to a temporary MP4 and check duration, level, clipping and scenes (positional: <film.ts>)",
   "cli.cmd.version": "Print the native analyser version",
   "cli.opt.output": "Output MP4 path",
   "cli.opt.json": "Print the result as JSON",

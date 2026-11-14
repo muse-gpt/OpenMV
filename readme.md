@@ -48,6 +48,11 @@ pnpm render:lyric                # -> lyric-mv.mp4 (12.5s, direct lyric compile)
 pnpm render:beat                 # -> beat-mv.mp4 (8s, per-beat hits)
 ```
 
+```bash
+# Delivery gate: renders to a temporary file, checks it, then deletes it.
+open-mv verify films/lyric-mv.ts --json
+```
+
 Local development links `@wae/open-cut` to a sibling OpenCut checkout, so you
 need:
 

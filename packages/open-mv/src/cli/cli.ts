@@ -8,6 +8,7 @@ import { registerPlanCommand } from './commands/plan-cmd.js';
 import { registerPresetsCommand } from './commands/presets-cmd.js';
 import { registerRenderCommand } from './commands/render-cmd.js';
 import { registerVersionCommand } from './commands/version-cmd.js';
+import { registerVerifyCommand } from './commands/verify-cmd.js';
 
 export function localesRoot(): string {
     return join(dirname(fileURLToPath(import.meta.url)), '../../locales');
@@ -23,6 +24,7 @@ export function buildMvCli() {
     registerPlanCommand(cli);
     registerPresetsCommand(cli);
     registerRenderCommand(cli);
+    registerVerifyCommand(cli);
     registerVersionCommand(cli);
 
     return cli;
