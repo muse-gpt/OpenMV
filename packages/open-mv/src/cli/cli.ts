@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { createCli } from '@wae/commander';
 
 import { registerAnalyzeCommand } from './commands/analyze-cmd.js';
+import { registerPlanCommand } from './commands/plan-cmd.js';
 import { registerPresetsCommand } from './commands/presets-cmd.js';
 import { registerRenderCommand } from './commands/render-cmd.js';
 import { registerVersionCommand } from './commands/version-cmd.js';
@@ -19,6 +20,7 @@ export function buildMvCli() {
         .intro('cli.intro');
 
     registerAnalyzeCommand(cli);
+    registerPlanCommand(cli);
     registerPresetsCommand(cli);
     registerRenderCommand(cli);
     registerVersionCommand(cli);

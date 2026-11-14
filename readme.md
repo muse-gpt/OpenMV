@@ -42,6 +42,7 @@ pnpm install
 pnpm build
 pnpm presets                     # palette / camera / lyric-style catalogue
 pnpm analyze song.wav            # BPM, beat offset, sections and energy
+pnpm plan song.wav               # storyboard script only: shots, camera, styles
 pnpm render:song                 # -> song-mv.mp4 (24s, song-first flow)
 pnpm render:lyric                # -> lyric-mv.mp4 (12.5s, direct lyric compile)
 pnpm render:beat                 # -> beat-mv.mp4 (8s, per-beat hits)
