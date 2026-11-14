@@ -28,3 +28,10 @@ export type { SectionKind, SongProfile, SongSection } from './song.js';
 
 export { compileSongMv, planGrid, planSongMv } from './plan.js';
 export type { CompileOptions, SongLineInput, SongMvOptions, SongMvPlan, SongShot } from './plan.js';
+
+import { native } from './native.js';
+
+/** Native analyser version reported by the binding. */
+export function nativeVersion(): string {
+    return native.version();
+}

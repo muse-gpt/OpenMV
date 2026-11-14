@@ -3,6 +3,7 @@
   "cli.cmd.analyze": "Analyze a PCM WAV song: BPM, beat offset and sections (positional: <song.wav>)",
   "cli.cmd.presets": "List the MV preset catalogue (palettes, camera moves, lyric text styles)",
   "cli.cmd.render": "Render a film module that default-exports an OpenCut Film (positional: <film.ts>)",
+  "cli.cmd.version": "Print the native analyser version",
   "cli.opt.output": "Output MP4 path",
   "cli.opt.json": "Print the result as JSON",
   "cli.analyze.sections": "sections:",
