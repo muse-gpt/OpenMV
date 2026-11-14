@@ -62,4 +62,16 @@ function load(): NativeBinding {
     );
 }
 
-export const native = load();
+export const native = lazyLoad();
+
+/** Loads the native binding on first use, so TS-only workflows never require it. */
+function lazyLoad(): NativeBinding {
+    let cached: NativeBinding | undefined;
+    return new Proxy({} as NativeBinding, {
+        get(_target, property) {
+            cached ??= load();
+            const value = Reflect.get(cached, property);
+            return typeof value === 'function' ? value.bind(cached) : value;
+        },
+    });
+}
