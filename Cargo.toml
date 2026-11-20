@@ -18,8 +18,8 @@ wae = { git = "https://github.com/doki-land/wae-framework.git", rev = "66f5d003f
 # Song analysis and the shared error contract live in the neutral media tree.
 # The revision is pinned to a full 40-character commit so this repo resolves
 # exactly one upstream source.
-media-audio = { git = "https://github.com/oovm/boost.rs.git", rev = "f7ec3506a8528bcb51d4002aecafc96d7d17051f" }
-media-types = { git = "https://github.com/oovm/boost.rs.git", rev = "f7ec3506a8528bcb51d4002aecafc96d7d17051f" }
+media-audio = { git = "https://github.com/oovm/boost.rs.git", rev = "5e859e3fc3ef50e3304bd766b8b4058541df325b" }
+media-types = { git = "https://github.com/oovm/boost.rs.git", rev = "5e859e3fc3ef50e3304bd766b8b4058541df325b" }
 
 [profile.release]
 lto = true
